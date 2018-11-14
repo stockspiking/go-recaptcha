@@ -22,8 +22,12 @@ type RecaptchaResponse struct {
 	ErrorCodes  []string  `json:"error-codes"`
 }
 
-const recaptchaServerName = "https://www.google.com/recaptcha/api/siteverify"
+const (
+	GoogleRecaptcha = "https://www.google.com/recaptcha/api/siteverify"
+	RecaptchaNet    = "https://recaptcha.net/recaptcha/api/siteverify"
+)
 
+var recaptchaServerUrl string
 var recaptchaPrivateKey string
 
 // check uses the client ip address, the challenge code from the reCaptcha form,
@@ -31,7 +35,7 @@ var recaptchaPrivateKey string
 // the client answered the reCaptcha input question correctly.
 // It returns a boolean value indicating whether or not the client answered correctly.
 func check(remoteip, response string) (r RecaptchaResponse, err error) {
-	resp, err := http.PostForm(recaptchaServerName,
+	resp, err := http.PostForm(recaptchaServerUrl,
 		url.Values{"secret": {recaptchaPrivateKey}, "remoteip": {remoteip}, "response": {response}})
 	if err != nil {
 		log.Printf("Post error: %s\n", err)
@@ -64,6 +68,7 @@ func Confirm(remoteip, response string) (result bool, err error) {
 
 // Init allows the webserver or code evaluating the reCaptcha form input to set the
 // reCaptcha private key (string) value, which will be different for every domain.
-func Init(key string) {
+func Init(url, key string) {
+	recaptchaServerUrl = url
 	recaptchaPrivateKey = key
 }

@@ -8,7 +8,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/dpapathanasiou/go-recaptcha"
+	"github.com/stockspiking/go-recaptcha"
 	"log"
 	"net/http"
 	"os"
@@ -84,7 +84,7 @@ func main() {
 		os.Exit(1)
 	} else {
 		recaptchaPublicKey = os.Args[1]
-		recaptcha.Init(os.Args[2])
+		recaptcha.Init(recaptcha.GoogleRecaptcha, os.Args[2])
 
 		http.HandleFunc("/", homePage)
 		if err := http.ListenAndServe(":9001", nil); err != nil {
